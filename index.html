@@ -215,6 +215,7 @@
       const button = document.getElementById("subscribe-button");
       const statusEl = document.getElementById("form-status");
       const endpoint = "https://subscribe.radzone.tech/subscribe";
+      const successMessage = "Thanks! Please check your email to confirm subscription.";
 
       function setStatus(message, type = "") {
         statusEl.textContent = message;
@@ -258,7 +259,7 @@
 
           if (response.ok && result.ok) {
             form.reset();
-            setStatus("Thanks! You are on the list.", "success");
+            setStatus(result.message || successMessage, "success");
           } else {
             setStatus(result.error || "Could not subscribe right now. Please try again.", "error");
           }
