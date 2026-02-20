@@ -12,6 +12,8 @@
         --muted: #9ea7c7;
         --accent: #86a8ff;
         --accent-soft: rgba(134, 168, 255, 0.2);
+        --success: #8cf4bc;
+        --error: #ff9ab3;
       }
 
       * {
@@ -88,10 +90,92 @@
         max-width: 62ch;
       }
 
+      .subscribe-form {
+        margin-top: 1.8rem;
+        display: grid;
+        gap: 0.85rem;
+      }
+
+      .row {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.85rem;
+      }
+
+      .subscribe-form input {
+        width: 100%;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        background: rgba(10, 14, 34, 0.6);
+        color: var(--text);
+        border-radius: 12px;
+        padding: 0.85rem 0.95rem;
+        font-size: 0.98rem;
+      }
+
+      .subscribe-form input::placeholder {
+        color: #91a1d1;
+      }
+
+      .subscribe-form input:focus {
+        outline: none;
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(134, 168, 255, 0.2);
+      }
+
+      .hidden-field {
+        position: absolute;
+        left: -9999px;
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .subscribe-button {
+        margin-top: 0.2rem;
+        width: fit-content;
+        border: 0;
+        border-radius: 999px;
+        padding: 0.8rem 1.35rem;
+        font-size: 0.95rem;
+        font-weight: 600;
+        letter-spacing: 0.01em;
+        color: #07112d;
+        background: linear-gradient(135deg, #d8e4ff, #8db1ff);
+        cursor: pointer;
+      }
+
+      .subscribe-button:disabled {
+        opacity: 0.6;
+        cursor: wait;
+      }
+
+      .form-status {
+        min-height: 1.2rem;
+        margin-top: 0.1rem;
+        font-size: 0.92rem;
+      }
+
+      .form-status.success {
+        color: var(--success);
+      }
+
+      .form-status.error {
+        color: var(--error);
+      }
+
       .footer-note {
         margin-top: 1.9rem;
         font-size: 0.9rem;
         color: #7f88a8;
+      }
+
+      @media (max-width: 640px) {
+        .row {
+          grid-template-columns: 1fr;
+        }
+
+        .subscribe-button {
+          width: 100%;
+        }
       }
     </style>
   </head>
@@ -105,12 +189,85 @@
         We are building something designed to feel effortless from the very first moment. No loud promises,
         no long explanation — just a new way that will soon feel obvious.
       </p>
-      <p>
-        If this sounds like your kind of future, stay close.
-      </p>
+      <p>If this sounds like your kind of future, stay close.</p>
+
+      <form id="subscribe-form" class="subscribe-form" novalidate>
+        <div class="row">
+          <input type="text" id="firstName" name="firstName" autocomplete="given-name" placeholder="First name" />
+          <input type="text" id="lastName" name="lastName" autocomplete="family-name" placeholder="Last name" />
+        </div>
+        <input type="email" id="email" name="email" autocomplete="email" placeholder="Email" required />
+
+        <div class="hidden-field" aria-hidden="true">
+          <label for="website">Website</label>
+          <input type="text" id="website" name="website" tabindex="-1" autocomplete="off" />
+        </div>
+
+        <button type="submit" id="subscribe-button" class="subscribe-button">Subscribe</button>
+        <p id="form-status" class="form-status" role="status" aria-live="polite"></p>
+      </form>
 
       <p class="footer-note">Launching soon · Built quietly, for those who notice details.</p>
     </main>
 
+    <script>
+      const form = document.getElementById("subscribe-form");
+      const button = document.getElementById("subscribe-button");
+      const statusEl = document.getElementById("form-status");
+      const endpoint = "https://subscribe.radzone.tech/subscribe";
+
+      function setStatus(message, type = "") {
+        statusEl.textContent = message;
+        statusEl.className = `form-status ${type}`.trim();
+      }
+
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        const payload = {
+          firstName: form.firstName.value.trim(),
+          lastName: form.lastName.value.trim(),
+          email: form.email.value.trim(),
+          website: form.website.value.trim(),
+        };
+
+        if (!payload.email) {
+          setStatus("Please enter your email.", "error");
+          form.email.focus();
+          return;
+        }
+
+        button.disabled = true;
+        setStatus("Sending...");
+
+        try {
+          const response = await fetch(endpoint, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(payload),
+          });
+
+          let result = {};
+          try {
+            result = await response.json();
+          } catch {
+            // ignore parse errors and show generic message below
+          }
+
+          if (response.ok && result.ok) {
+            form.reset();
+            setStatus("Thanks! You are on the list.", "success");
+          } else {
+            setStatus(result.error || "Could not subscribe right now. Please try again.", "error");
+          }
+        } catch {
+          setStatus("Network error. Please try again in a moment.", "error");
+        } finally {
+          button.disabled = false;
+        }
+      });
+    </script>
   </body>
 </html>
