@@ -1,9 +1,33 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Coming Into Focus</title>
+    <title>RadZone — электроника, DIY, пайка и умные устройства</title>
+    <meta
+      name="description"
+      content="RadZone — сообщество и платформа для самодельщиков, гиков и инженеров: пайка, разработка электроники, прототипирование, IoT и умные устройства."
+    />
+    <meta
+      name="keywords"
+      content="DIY электроника, пайка, производство электроники, IoT, умные устройства, прототипирование, hardware, embedded, самодельщики, гики"
+    />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <link rel="canonical" href="https://radzone.tech/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="RadZone" />
+    <meta property="og:title" content="RadZone — для самодельщиков, гиков и hardware-инженеров" />
+    <meta
+      property="og:description"
+      content="Пайка, разработка электроники, умные устройства и современное DIY-производство — всё в одном месте."
+    />
+    <meta property="og:url" content="https://radzone.tech/" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="RadZone — DIY электроника и умные устройства" />
+    <meta
+      name="twitter:description"
+      content="Платформа для тех, кто создает электронику: от паяльника до серийных умных устройств."
+    />
     <style>
       :root {
         --bg: #0c0f1f;
@@ -183,18 +207,21 @@
     <div class="glow" aria-hidden="true"></div>
 
     <main class="card">
-      <span class="tag"><span class="dot"></span> Something is taking shape</span>
-      <h1>The next quiet shift starts here.</h1>
+      <span class="tag"><span class="dot"></span> Платформа в разработке</span>
+      <h1>RadZone — место для самодельщиков, гиков и инженеров электроники.</h1>
       <p>
-        We are building something designed to feel effortless from the very first moment. No loud promises,
-        no long explanation — just a new way that will soon feel obvious.
+        Мы строим пространство для людей, которые любят делать устройства своими руками: пайка, разработка
+        плат, прототипирование, embedded и IoT-проекты.
       </p>
-      <p>If this sounds like your kind of future, stay close.</p>
+      <p>
+        Если вы создаете умные устройства, занимаетесь производством электроники или просто обожаете hardware
+        — оставьте email и узнаете о запуске первыми.
+      </p>
 
       <form id="subscribe-form" class="subscribe-form" novalidate>
         <div class="row">
-          <input type="text" id="firstName" name="firstName" autocomplete="given-name" placeholder="First name" />
-          <input type="text" id="lastName" name="lastName" autocomplete="family-name" placeholder="Last name" />
+          <input type="text" id="firstName" name="firstName" autocomplete="given-name" placeholder="Имя" />
+          <input type="text" id="lastName" name="lastName" autocomplete="family-name" placeholder="Фамилия" />
         </div>
         <input type="email" id="email" name="email" autocomplete="email" placeholder="Email" required />
 
@@ -203,11 +230,11 @@
           <input type="text" id="website" name="website" tabindex="-1" autocomplete="off" />
         </div>
 
-        <button type="submit" id="subscribe-button" class="subscribe-button">Subscribe</button>
+        <button type="submit" id="subscribe-button" class="subscribe-button">Подписаться</button>
         <p id="form-status" class="form-status" role="status" aria-live="polite"></p>
       </form>
 
-      <p class="footer-note">Launching soon · Built quietly, for those who notice details.</p>
+      <p class="footer-note">Скоро запуск · Для тех, кто любит детали, схемы и хорошие устройства.</p>
     </main>
 
     <script>
@@ -215,7 +242,7 @@
       const button = document.getElementById("subscribe-button");
       const statusEl = document.getElementById("form-status");
       const endpoint = "https://subscribe.radzone.tech/subscribe";
-      const successMessage = "Thanks! Please check your email to confirm subscription.";
+      const successMessage = "Готово! Проверьте почту и подтвердите подписку.";
 
       function setStatus(message, type = "") {
         statusEl.textContent = message;
@@ -233,13 +260,13 @@
         };
 
         if (!payload.email) {
-          setStatus("Please enter your email.", "error");
+          setStatus("Введите email.", "error");
           form.email.focus();
           return;
         }
 
         button.disabled = true;
-        setStatus("Sending...");
+        setStatus("Отправляем...");
 
         try {
           const response = await fetch(endpoint, {
@@ -261,14 +288,24 @@
             form.reset();
             setStatus(result.message || successMessage, "success");
           } else {
-            setStatus(result.error || "Could not subscribe right now. Please try again.", "error");
+            setStatus(result.error || "Сейчас не удалось подписаться. Попробуйте еще раз.", "error");
           }
         } catch {
-          setStatus("Network error. Please try again in a moment.", "error");
+          setStatus("Ошибка сети. Попробуйте через минуту.", "error");
         } finally {
           button.disabled = false;
         }
       });
+    </script>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "RadZone",
+        "url": "https://radzone.tech/",
+        "inLanguage": "ru",
+        "description": "Платформа для самодельщиков, гиков и инженеров: пайка, электроника, IoT и умные устройства."
+      }
     </script>
   </body>
 </html>
